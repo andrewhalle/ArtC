@@ -54,15 +54,15 @@ void freeImage(char*** image, int width, int height) {
 	free(image);
 }
 
-void setColor(char*** image, int width, int height, int coordX, int coordY, char red, char green, char blue) {
+void setColor(char*** image, int width, int height, int coordX, int coordY, unsigned char red, unsigned char green, unsigned char blue) {
 	if ((coordX < width) && (coordY < height)) {
 		image[coordY][coordX][0] = red;
-		image[coordY][coordX][1] = blue;
-		image[coordY][coordX][2] = green;
+		image[coordY][coordX][1] = green;
+		image[coordY][coordX][2] = blue;
 	}
 }
 
-void drawSquare(char*** image, int width, int height, int coordX, int coordY, int radius, char red, char green, char blue) {
+void drawSquare(char*** image, int width, int height, int coordX, int coordY, int radius, unsigned char red, unsigned char green, unsigned char blue) {
 	if ((coordX >= radius) && (coordX <= width - radius) && (coordY >= radius) && (coordY <= height - radius)) {
 		int i;
 		for (i = -radius; i <= radius; i++) {
@@ -74,7 +74,7 @@ void drawSquare(char*** image, int width, int height, int coordX, int coordY, in
 	}
 }
 
-void drawCircle(char*** image, int width, int height, int coordX, int coordY, int radius, char red, char green, char blue) {
+void drawCircle(char*** image, int width, int height, int coordX, int coordY, int radius, unsigned char red, unsigned char green, unsigned char blue) {
 	if ((coordX >= radius) && (coordX <= width - radius) && (coordY >= radius) && (coordY <= height - radius)) {
 		int x = radius;
 		int y = 0;
