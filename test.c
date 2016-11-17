@@ -3,7 +3,7 @@
 
 int main() {
 	LinkedList* waveform = newWaveform();
-	addSecondHarmonicWave(waveform, 440.0, 2.0);
+	addOrgan(waveform, 440.0, 2.0);
 	writeSoundFile("test.wav", waveform);
 	freeWaveform(waveform);
 }

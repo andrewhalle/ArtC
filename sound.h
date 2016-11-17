@@ -116,14 +116,14 @@ void addSineWave(LinkedList* waveform, double frequency, double duration) {
 
 }
 
-void addSecondHarmonicWave(LinkedList* waveform, double frequency, double duration) {
+void addOrgan(LinkedList* waveform, double frequency, double duration) {
 	double sampleFreq = 44100;
 	double t = 0;
 	double value;
 	unsigned char sample;
 	while (t < duration) {
-		value = SIN(2.0 * PI() * frequency * t) + 0.5 * SIN(4.0 * PI() * frequency * t) + 1.5;
-		value = value / 1.5;
+		value = SIN(2.0 * PI() * frequency * t) + 0.2 * SIN(3.0 * PI() * frequency * t) + 1.5;
+		value = value / 1.2;
 		value = (value * 255.0) / 2.0;
 		sample = ROUND(value);
 		appendLinkedList(waveform, sample);
