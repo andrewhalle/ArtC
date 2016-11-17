@@ -110,7 +110,7 @@ void addSineWave(LinkedList* waveform, double frequency, double duration) {
 	double value;
 	unsigned char sample;
 	while (t < duration) {
-		value = SIN(frequency * t) + 1;
+		value = SIN(2.0 * PI() * frequency * t) + 1;
 		value = (value * 255.0) / 2.0;
 		sample = ROUND(value);
 		appendLinkedList(waveform, sample);
@@ -119,14 +119,25 @@ void addSineWave(LinkedList* waveform, double frequency, double duration) {
 
 }
 
+void loadSize(int number, unsigned char* size) {
+	int i;
+	for(i = 0; i < 4; i++) {
+		size[i] = (unsigned char) (number & 0xff);
+		number = number >> 8;
+	}
+}
+
 void writeSoundFile(char* filename, LinkedList* waveform) {
 	FILE* fp = fopen(filename, "wb");
 	unsigned char x[] = {0x52, 0x49, 0x46, 0x46};
 	unsigned char y[] = {0x57, 0x41, 0x56, 0x45, 0x66, 0x6d, 0x74, 0x20, 0x10, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x44, 0xac, 0x00, 0x00, 0x44, 0xac, 0x00, 0x00, 0x01, 0x00, 0x08, 0x00, 0x64, 0x61, 0x74, 0x61};
+	unsigned char size[4];
 	fwrite(x, sizeof(char), 4, fp);
-	x[0] = 36 + waveform->size;
-	fwrite(x, sizeof(int), 1, fp);
+	loadSize(waveform->size + 36, size);
+	fwrite(size, sizeof(char), 4, fp);
 	fwrite(y, sizeof(char), 32, fp);
+	loadSize(waveform->size, size);
+	fwrite(size, sizeof(char), 4, fp);
 	unsigned char v[1];
 	while (waveform != NULL) {
 		v[0] = waveform->value;
