@@ -64,6 +64,7 @@ typedef struct LinkedList {
 	int size;
 	unsigned char value;
 	struct LinkedList* next;
+	struct LinkedList* end;
 } LinkedList;
 
 LinkedList* singleLinkedList(unsigned char v) {
@@ -71,18 +72,14 @@ LinkedList* singleLinkedList(unsigned char v) {
 	ll->size = 1;
 	ll->value = v;
 	ll->next = NULL;
+	ll->end = ll;
 	return ll;
 }
 
 void appendLinkedList(LinkedList* ll, unsigned char value) {
-	LinkedList* temp = ll;
-	if (temp->next == NULL) {
-		temp->next = (LinkedList*) singleLinkedList(value);
-		temp->size += 1;
-	} else {
-		appendLinkedList(ll->next, value);
-		ll->size += 1;
-	}
+	ll->end->next = singleLinkedList(value);
+	ll->end = ll->end->next;
+	ll->size += 1;
 }
 
 void freeLinkedList(LinkedList* ll) {
@@ -144,4 +141,5 @@ void writeSoundFile(char* filename, LinkedList* waveform) {
 		fwrite(v, sizeof(char), 1, fp);
 		waveform = waveform->next;
 	}
+	fclose(fp);
 }
