@@ -111,9 +111,24 @@ void addSineWave(LinkedList* waveform, double frequency, double duration) {
 		value = (value * 255.0) / 2.0;
 		sample = ROUND(value);
 		appendLinkedList(waveform, sample);
-		t += 1/44100.0;
+		t += 1/sampleFreq;
 	}
 
+}
+
+void addSecondHarmonicWave(LinkedList* waveform, double frequency, double duration) {
+	double sampleFreq = 44100;
+	double t = 0;
+	double value;
+	unsigned char sample;
+	while (t < duration) {
+		value = SIN(2.0 * PI() * frequency * t) + 0.5 * SIN(4.0 * PI() * frequency * t) + 1.5;
+		value = value / 1.5;
+		value = (value * 255.0) / 2.0;
+		sample = ROUND(value);
+		appendLinkedList(waveform, sample);
+		t += 1/sampleFreq;
+	}
 }
 
 void loadSize(int number, unsigned char* size) {
