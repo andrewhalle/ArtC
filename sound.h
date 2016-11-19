@@ -1,48 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
+#include <time.h>
 
 /* Math functions */
-
-double PI() {
-	return 3.14159;
-}
-
-double SIN(double x) {
-	double sign;
-	if (x < 0) {
-		return SIN(x + (2.0 * PI()));
-	}
-	if (x > 2.0*PI()) {
-		return SIN(x - (2.0*PI()));
-	}
-	if (x < PI() / 2.0) {
-		sign = 1.0;
-	} else if (x < PI()) {
-		sign = 1.0;
-		x = PI() - x;
-	} else if (x < PI() * (3.0/2.0)) {
-		sign = -1;
-		x -= PI();
-	} else if(x < 2.0 * PI()) {
-		sign = -1;
-		x -= PI();
-		x = PI() - x;
-	} else if (x == 0) {
-		return 0;
-	} else if (x == PI() / 2) {
-		return 1;
-	} else if (x == PI() * (3.0/2.0)) {
-		return -1;
-	} else {
-		return 0;
-	}
-	if (x < PI()/4.0) {
-		return sign * (x - (x*x*x)/6.0 + (x*x*x*x*x)/120.0);
-	} else {
-		x = PI()/2.0 - x;
-		return sign * (1 - (x*x)/2.0 + (x*x*x*x)/24.0 - (x*x*x*x*x*x)/720.0);
-	}
-}
 
 unsigned char ROUND(double x) {
 	int base = (int) x;
@@ -107,7 +68,7 @@ void addSineWave(LinkedList* waveform, double frequency, double duration) {
 	double value;
 	unsigned char sample;
 	while (t < duration) {
-		value = SIN(2.0 * PI() * frequency * t) + 1;
+		value = sin(2.0 * M_PI * frequency * t) + 1;
 		value = (value * 255.0) / 2.0;
 		sample = ROUND(value);
 		appendLinkedList(waveform, sample);
@@ -122,10 +83,24 @@ void addOrgan(LinkedList* waveform, double frequency, double duration) {
 	double value;
 	unsigned char sample;
 	while (t < duration) {
-		value = SIN(2.0 * PI() * frequency * t) + 0.2 * SIN(3.0 * PI() * frequency * t) + 1.5;
+		value = sin(2.0 * M_PI * frequency * t) + 0.2 * sin(3.0 * M_PI * frequency * t);
 		value = value / 1.2;
+		value += 1;
 		value = (value * 255.0) / 2.0;
 		sample = ROUND(value);
+		appendLinkedList(waveform, sample);
+		t += 1/sampleFreq;
+	}
+}
+
+void addNoise(LinkedList* waveform, double duration) {
+	srand(time(NULL));
+	double sampleFreq = 44100;
+	double t = 0;
+	unsigned char sample;
+	while (t < duration) {
+		int value = rand();
+		sample = (unsigned char) value;
 		appendLinkedList(waveform, sample);
 		t += 1/sampleFreq;
 	}
