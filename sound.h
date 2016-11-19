@@ -54,6 +54,56 @@ void freeLinkedList(LinkedList* ll) {
 
 /* End linked list */
 
+/* Ring buffer implementation */
+
+typedef struct RingBufferNode {
+	double value;
+	struct RingBufferNode* next;
+	struct RingBufferNode* prev;
+} RingBufferNode;
+
+typedef struct RingBuffer {
+	RingBufferNode* head;
+} RingBuffer;
+
+RingBuffer* ringBufferOfSize(int n) {
+	srand(time(NULL));
+	RingBuffer* ring = (RingBuffer*) malloc(sizeof(RingBuffer));
+	RingBufferNode* h = (RingBufferNode*) malloc(sizeof(RingBufferNode));
+	ring->head = h;
+	h->value = ((double) rand() / (double) RAND_MAX);
+	h->prev = NULL;
+	h->next = NULL;
+	int i;
+	RingBufferNode* traverse = h;
+	for (i = 1; i < n; i++) {
+		traverse->next = (RingBufferNode*) malloc(sizeof(RingBufferNode));
+		traverse->next->value = ((double) rand() / (double) RAND_MAX);
+		traverse->next->prev = traverse;
+		traverse->next->next = NULL;
+		traverse = traverse->next;
+	}
+	h->prev = traverse;
+	traverse->next = h;
+	return ring;
+}
+
+double averageAndShift(RingBuffer* ring) {
+	double x = (ring->head->value + ring->head->next->value) / 2.0;
+	RingBufferNode* n = (RingBufferNode*) malloc(sizeof(RingBufferNode));
+	n->value = x;
+	n->prev = ring->head->prev;
+	n->next = ring->head->next;
+	ring->head->prev->next = n;
+	ring->head->next->prev = n;
+	RingBufferNode* temp = ring->head;
+	ring->head = ring->head->next;
+	free(temp);
+	return x;
+}
+
+/* end ring buffer */
+
 LinkedList* newWaveform() {
 	return singleLinkedList(0);
 }
@@ -63,7 +113,7 @@ void freeWaveform(LinkedList* waveform) {
 }
 
 void addSineWave(LinkedList* waveform, double frequency, double duration) {
-	double sampleFreq = 44100;
+	double sampleFreq = 44100.0;
 	double t = 0;
 	double value;
 	unsigned char sample;
@@ -78,7 +128,7 @@ void addSineWave(LinkedList* waveform, double frequency, double duration) {
 }
 
 void addOrgan(LinkedList* waveform, double frequency, double duration) {
-	double sampleFreq = 44100;
+	double sampleFreq = 44100.0;
 	double t = 0;
 	double value;
 	unsigned char sample;
@@ -95,12 +145,26 @@ void addOrgan(LinkedList* waveform, double frequency, double duration) {
 
 void addNoise(LinkedList* waveform, double duration) {
 	srand(time(NULL));
-	double sampleFreq = 44100;
+	double sampleFreq = 44100.0;
 	double t = 0;
 	unsigned char sample;
 	while (t < duration) {
 		int value = rand();
 		sample = (unsigned char) value;
+		appendLinkedList(waveform, sample);
+		t += 1/sampleFreq;
+	}
+}
+
+void addGuitar(LinkedList* waveform, double frequency, double duration) {
+	double sampleFreq = 44100.0;
+	RingBuffer* buffer = ringBufferOfSize((int) lround(sampleFreq / frequency));
+	double t = 0;
+	double value;
+	unsigned char sample;
+	while (t < duration) {
+		value = averageAndShift(buffer);
+		sample = ROUND(value * 255.0);
 		appendLinkedList(waveform, sample);
 		t += 1/sampleFreq;
 	}
