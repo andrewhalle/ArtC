@@ -88,8 +88,9 @@ RingBuffer* ringBufferOfSize(int n) {
 	return ring;
 }
 
-double averageAndShift(RingBuffer* ring) {
+double averageAndShift(RingBuffer* ring, double decayFactor) {
 	double x = (ring->head->value + ring->head->next->value) / 2.0;
+	x *= decayFactor;
 	RingBufferNode* n = (RingBufferNode*) malloc(sizeof(RingBufferNode));
 	n->value = x;
 	n->prev = ring->head->prev;
@@ -163,7 +164,7 @@ void addGuitar(LinkedList* waveform, double frequency, double duration) {
 	double value;
 	unsigned char sample;
 	while (t < duration) {
-		value = averageAndShift(buffer);
+		value = averageAndShift(buffer, 0.998);
 		sample = ROUND(value * 255.0);
 		appendLinkedList(waveform, sample);
 		t += 1/sampleFreq;
