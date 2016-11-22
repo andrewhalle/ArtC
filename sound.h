@@ -171,6 +171,42 @@ void addGuitar(LinkedList* waveform, double frequency, double duration) {
 	}
 }
 
+void addSilence(LinkedList* waveform, double duration) {
+	double sampleFreq = 44100.0;
+	double t = 0;
+	while (t < duration) {
+		appendLinkedList(waveform, 0);
+		t += 1/sampleFreq;
+	}
+}
+
+void overlapWaveforms(LinkedList* dest, LinkedList* layer) {
+	if (dest->size != layer->size) {
+		return;
+	}
+	LinkedList* traverse1 = dest;
+	LinkedList* traverse2 = layer;
+	double max = 0;
+	double value1, value2;
+	while (traverse1 != NULL) {
+		value1 = (double) traverse1->value;
+		value2 = (double) traverse2->value;
+		if (value1 + value2 > max) {
+			max = value1 + value2;
+		}
+		traverse1 = traverse1->next;
+		traverse2 = traverse2->next;
+	}
+	traverse1 = dest;
+	traverse2 = layer;
+	while (traverse1 != NULL) {
+		value1 = (double) traverse1->value + (double) traverse2->value;
+		traverse1->value = ROUND((value1 / max) * 255.0);
+		traverse1 = traverse1->next;
+		traverse2 = traverse2->next;
+	}
+}
+
 void loadSize(int number, unsigned char* size) {
 	int i;
 	for(i = 0; i < 4; i++) {
