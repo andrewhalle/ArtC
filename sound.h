@@ -144,6 +144,22 @@ void addOrgan(LinkedList* waveform, double frequency, double duration) {
 	}
 }
 
+void addCello(LinkedList* waveform, double frequency, double duration) {
+	double sampleFreq = 44100.0;
+	double t = 0;
+	double value;
+	unsigned char sample;
+	while (t < duration) {
+		value = sin(2.0 * M_PI * frequency * t) + 0.88 * sin(2.0 * M_PI * 2.0 * frequency * t) + 0.83 * sin(2.0 * M_PI * 3.0 * frequency * t) + 0.77 * sin(2.0 * M_PI * 4.0 * frequency * t) + 0.83 * sin(2.0 * M_PI * 5.0 * frequency * t) + 0.77 * sin(2.0 * M_PI * 6.0 * frequency * t) + 0.65 * sin(2.0 * M_PI * 7.0 * frequency * t) + 0.73 * sin(2.0 * M_PI * 8.0 * frequency * t) + 0.73 * sin(2.0 * M_PI * 9.0 * frequency * t);
+		value = value / 7.19;
+		value += 1;
+		value = (value * 255.0) / 2.0;
+		sample = ROUND(value);
+		appendLinkedList(waveform, sample);
+		t += 1/sampleFreq;
+	}
+}
+
 void addNoise(LinkedList* waveform, double duration) {
 	srand(time(NULL));
 	double sampleFreq = 44100.0;
